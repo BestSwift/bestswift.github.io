@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+
+    <!-- Title -->
+    
+    <title>[iOS]从点击应用图标说起 - 苏小超的博客</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--Description-->
+    
+        <meta name="description" content="我们可以把启动过程分为main函数之前和main函数之后两个部分。
+main函数之前
+加载可执行文件
+加载动态链接库加载器dyld
+dyld递归加载dylibs
+
+dyld加载过程我们首先学习dyld加载过程，主要分5个部分。可以参考这里
+
+1.Load dylibs
+解析所依赖的dylibs
+找到">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="苏小超">
+    
+
+    <!--Favicon-->
+    
+      <link rel="icon" href="images/favicon.ico">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="[iOS]从点击应用图标说起">
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="苏小超的博客">
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content>
+    
+
+
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/sass/main.css">
+
+    <!--[if lt IE 8]>
+        <script src="/js/ie/html5shiv.js"></script>
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+        <link rel="stylesheet" href="/sass/ie8.css">
+    <![endif]-->
+
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body id="top">
+
+    <!-- Header -->
+    <header id="header">
+  <div class="inner">
+    <a href="/" class="image avatar"><img src="https://www.gravatar.com/avatar/c51b0039da88e440d9689210b7681900" alt="" /></a>
+    <h1><strong>我是苏小超</br>一名 iOS 开发者</strong></h1>
+  </div>
+</header>
+
+
+    <!-- Main -->
+		<div id="main">
+
+      <!-- Main Content -->
+      <!-- One -->
+<section id="one">
+  <div class="meta">
+  
+      <span class="date">
+          2019-09-26
+      </span>
+  
+
+  
+
+  
+
+
+</div>
+
+
+
+    
+      <h1 itemprop="name">
+        [iOS]从点击应用图标说起
+      </h1>
+    
+  
+
+
+
+    <div class="image main"><img src="http://placehold.it/1300x500" alt="" /></div>
+
+
+<!-- Gallery -->
+
+
+
+<!-- Content -->
+<p>我们可以把启动过程分为main函数之前和main函数之后两个部分。</p>
+<h2 id="main函数之前"><a href="#main函数之前" class="headerlink" title="main函数之前"></a>main函数之前</h2><ol>
+<li>加载可执行文件</li>
+<li>加载动态链接库加载器dyld</li>
+<li>dyld递归加载dylibs</li>
+</ol>
+<h2 id="dyld加载过程"><a href="#dyld加载过程" class="headerlink" title="dyld加载过程"></a>dyld加载过程</h2><p>我们首先学习dyld加载过程，主要分5个部分。可以参考<a href="https://developer.apple.com/videos/play/wwdc2016/406/" target="_blank" rel="noopener">这里</a></p>
+<p><img src="http://pyfk18d6k.bkt.clouddn.com/1519758-a5549d393af720d5.jpg" alt></p>
+<h3 id="1-Load-dylibs"><a href="#1-Load-dylibs" class="headerlink" title="1.Load dylibs"></a>1.Load dylibs</h3><ul>
+<li>解析所依赖的dylibs</li>
+<li>找到所需的mach-o文件</li>
+<li>打开和读取文件然后验证有效性</li>
+<li>注册代码签名</li>
+<li>每一个segment调用mmap()</li>
+</ul>
+<h3 id="2-Rebase"><a href="#2-Rebase" class="headerlink" title="2.Rebase"></a>2.Rebase</h3><ul>
+<li>对镜像调整指针。</li>
+</ul>
+<h3 id="3-Bind"><a href="#3-Bind" class="headerlink" title="3.Bind"></a>3.Bind</h3><ul>
+<li>设置指针指向外部的镜像。</li>
+</ul>
+<h3 id="4-Objc"><a href="#4-Objc" class="headerlink" title="4.Objc"></a>4.Objc</h3><ul>
+<li>大部分的初始化工作已经通过Rebase和Bind做完</li>
+<li>注册所有的Objc类</li>
+<li>将category插入到方法列表</li>
+<li>保证方法唯一</li>
+</ul>
+<h3 id="5-Initializers"><a href="#5-Initializers" class="headerlink" title="5.Initializers"></a>5.Initializers</h3><ul>
+<li>调用Objc和分类的+load方法</li>
+<li>Dyld调用main()函数</li>
+</ul>
+<h2 id="main函数之后"><a href="#main函数之后" class="headerlink" title="main函数之后"></a>main函数之后</h2><p>main函数之后我们可以看下面这张图:<br><img src="http://pyfk18d6k.bkt.clouddn.com/1519758-a86129a10bfa4ea2.jpg" alt></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char * argv[]) &#123;</span><br><span class="line">    @autoreleasepool &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">UIApplicationMain</span>(argc, argv, <span class="literal">nil</span>, <span class="type">NSStringFromClass</span>([<span class="type">AppDelegate</span> <span class="class"><span class="keyword">class</span>]));</span></span><br><span class="line"><span class="class">    &#125;</span></span><br><span class="line"><span class="class">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-main-执行UIApplicationMain"><a href="#1-main-执行UIApplicationMain" class="headerlink" title="1. main() 执行UIApplicationMain()"></a>1. main() 执行UIApplicationMain()</h3><h3 id="2-UIApplicationMain-创建UIApplication"><a href="#2-UIApplicationMain-创建UIApplication" class="headerlink" title="2. UIApplicationMain()创建UIApplication"></a>2. UIApplicationMain()创建UIApplication</h3><h3 id="3-UIApplicationMain-创建AppDelegate并复制"><a href="#3-UIApplicationMain-创建AppDelegate并复制" class="headerlink" title="3. UIApplicationMain()创建AppDelegate并复制"></a>3. UIApplicationMain()创建AppDelegate并复制</h3><h3 id="4-UIApplication创建并管理RunLoop"><a href="#4-UIApplication创建并管理RunLoop" class="headerlink" title="4. UIApplication创建并管理RunLoop"></a>4. UIApplication创建并管理RunLoop</h3><h3 id="5-UIApplication调用application-didFinishLaunchingWithOptions"><a href="#5-UIApplication调用application-didFinishLaunchingWithOptions" class="headerlink" title="5. UIApplication调用application:didFinishLaunchingWithOptions:"></a>5. UIApplication调用application:didFinishLaunchingWithOptions:</h3><h3 id="6-application-didFinishLaunchingWithOptions-创建并显示Application-Window"><a href="#6-application-didFinishLaunchingWithOptions-创建并显示Application-Window" class="headerlink" title="6. application:didFinishLaunchingWithOptions:创建并显示Application Window"></a>6. application:didFinishLaunchingWithOptions:创建并显示Application Window</h3><h3 id="7-Application-Window设置根控制器Root-View-Controller"><a href="#7-Application-Window设置根控制器Root-View-Controller" class="headerlink" title="7. Application Window设置根控制器Root View Controller"></a>7. Application Window设置根控制器Root View Controller</h3>
+
+<!-- Tags -->
+
+
+
+<div class="tags">
+    
+</div>
+
+
+<!-- Comments -->
+<div>
+    
+
+
+</div>
+
+</section>
+
+
+      <!-- Three - the contact form is on every page! -->
+<!--         <section id="three">
+          <h2>Get In Touch</h2>
+<p>Us a service like Google forms or formspree to modify this partial in _partials/contact-form.</p>
+<div class="row">
+  <div class="8u 12u$(small)">
+    <form method="post" action="#">
+      <div class="row uniform 50%">
+        <div class="6u 12u$(xsmall)"><input type="text" name="name" id="name" placeholder="Name" /></div>
+        <div class="6u$ 12u$(xsmall)"><input type="email" name="email" id="email" placeholder="Email" /></div>
+        <div class="12u$"><textarea name="message" id="message" placeholder="Message" rows="4"></textarea></div>
+      </div>
+    </form>
+    <ul class="actions">
+      <li><input type="submit" value="Send Message" /></li>
+    </ul>
+  </div>
+  <div class="4u$ 12u$(small)">
+    <ul class="labeled-icons">
+      <li>
+        <h3 class="icon fa-home"><span class="label">Address</span></h3>
+        1234 Somewhere Rd.<br />
+        Nashville, TN 00000<br />
+        United States
+      </li>
+      <li>
+        <h3 class="icon fa-mobile"><span class="label">Phone</span></h3>
+        000-000-0000
+      </li>
+      <li>
+        <h3 class="icon fa-envelope-o"><span class="label">Email</span></h3>
+        <a href="#">hello@untitled.tld</a>
+      </li>
+    </ul>
+  </div>
+</div>
+        </section> -->
+
+        <!-- Footer -->
+<footer id="footer">
+    <div class="inner">
+
+        <ul class="icons">
+            
+            
+            
+            
+            
+            
+            
+            
+            
+                <li><a href="jason_xiaochao@163.com" class="icon fa-envelope-o" target="_blank" ><span class="label">Email</span></a></li>
+            
+            
+        </ul>
+
+        <ul class="copyright">
+            <li>&copy; Untitled. All rights reserved</li>
+            <li>Design: <a href="http://html5up.net" target="_blank">HTML5 UP</a></li>
+            <li>Hexo: <a href="http://livingos.com/" target="_blank">Tim Hyde</a></li>
+        </ul>
+    </div>
+</footer>
+
+        
+    </div>
+
+    <!-- After footer scripts -->
+      <!-- Scripts -->
+  <script src="/js/jquery.min.js"></script>  <script src="/js/jquery.poptrox.min.js"></script>  <script src="/js/skel.min.js"></script>  <script src="/js/util.js"></script>
+  <!--[if lte IE 8]>
+  <script src="/js/ie/respond.min.js"></script>
+  <![endif]-->
+
+  <script src="/js/main.js"></script>
+  <!-- Disqus Comments -->
+  
+
+
+</body>
+</html>
